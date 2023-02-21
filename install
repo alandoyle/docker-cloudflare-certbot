@@ -25,7 +25,7 @@ fi
 #
 if [ ! -d /srv/docker-cloudflare-certbot ] ; then
     cd /srv
-    git clone https://github.com/alandoyle/docker-cloudflare-certbot
+    git clone https://github.com/alandoyle/docker-cloudflare-certbot >/dev/null
 fi
 #
 ################################################################################
@@ -33,7 +33,7 @@ fi
 # Ensure up-to-date
 #
 cd /srv/docker-cloudflare-certbot
-git pull
+git pull >/dev/null
 chmod a+x /srv/docker-cloudflare-certbot/bin/*
 chmod a+x /srv/docker-cloudflare-certbot/install
 #
@@ -52,8 +52,8 @@ echo "EMAIL=${EMAIL}" > /srv/docker-cloudflare-certbot/.env
 #
 # Ensure we have an API Token to use with Cloudflare DNS
 #
-if [ ! -f /srv/docker-cloudflare-certbot/cloudflare/credentials ] ; then
-    APITOKEN=`grep dns_cloudflare_api_token credentials | cut -d= -f2 | sed -e 's/^[ \t]*//'`
+if [ -f /srv/docker-cloudflare-certbot/cloudflare/credentials ] ; then
+    APITOKEN=`grep dns_cloudflare_api_token /srv/docker-cloudflare-certbot/cloudflare/credentials | cut -d= -f2 | sed -e 's/^[ \t]*//'`
 fi
 while [ -z ${APITOKEN} ] ; do
     read -p "What is the API Token to use with Cloudflare [${APITOKEN}] ? " APITOKEN
