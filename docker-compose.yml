@@ -1,0 +1,13 @@
+version: "2"
+
+services:
+  letsencrypt-cloudflare:
+    image: certbot/dns-cloudflare
+
+    # Renew certificate
+    command: renew --non-interactive --no-self-upgrade --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos --server https://acme-v02.api.letsencrypt.org/directory
+
+    volumes:
+      - ./cloudflare:/opt/cloudflare
+      - /etc/letsencrypt:/etc/letsencrypt
+      - ./letsencrypt/log:/var/log/letsencrypt

@@ -31,4 +31,4 @@ or to include wildcard subdomains in certificate `sudo gen-cert -w <DOMAIN CONTR
 
 ## Note
 
-  - All commands *MUST* be run as `root`, either directly or via *sudo*, as the certificates are generated in /etc/letsencrypt on the host machine. This allows the host machine as well as all local docker containers can access the certificates.
+  - All commands *MUST* be run as `root`, either directly or via *sudo*, as the certificates are generated in `/etc/letsencrypt` on the host machine. This allows the host machine as well as all local docker/LXC/LXD containers can access the certificates, if `/etc/letsencrypt` is mapped into those containers.

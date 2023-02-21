@@ -1,0 +1,68 @@
+#!/bin/bash
+#
+# A simple installer for the Certbot Cloudflare DNS docker image.
+#
+# Copyright (C) 2023 Alan Doyle
+#
+# https://github.com/alandoyle/docker-cloudflare-certbot
+#
+################################################################################
+#
+EMAILADDRESS=
+#
+################################################################################
+#
+ Root check
+#
+if [ `id -u` -ne 0 ] ; then
+    echo "ERROR: This script needs to be run as root or using sudo."
+    exit 99
+fi
+################################################################################
+#
+# Download the git repository
+#
+if [ ! -d /srv/docker-cloudflare-certbot ] ; then
+    cd /srv
+    git clone https://github.com/alandoyle/docker-cloudflare-certbot
+fi
+#
+################################################################################
+#
+# Ensure up-to-date
+#
+cd /srv/docker-cloudflare-certbot
+git pull
+#
+################################################################################
+#
+# Ensure we have an email address as that's required for sue with Lets Encrypt
+#
+if [ ! -f /srv/docker-cloudflare-certbot/.env ] ; then
+    while [ -z EMAILADDRESS ] ; do
+        read -P "What email address do you wish to use with Lets Encrypt? " EMAILADDRESS
+    done
+    echo EMAIL=${EMAILADDRESS}
+    echo "EMAIL=${EMAILADDRESS}" > /srv/docker-cloudflare-certbot/.env
+fi
+#
+################################################################################
+#
+# Create sumbolic links
+#
+ln -s /srv/docker-cloudflare-certbot/bin/gen-cert     /usr/local/bin/gen-cert
+ln -s /srv/docker-cloudflare-certbot/bin/renew-certs  /usr/local/bin/renew-certs
+ln -s /srv/docker-cloudflare-certbot/bin/test-certbot /usr/local/bin/test-certbot
+#
+################################################################################
+#
+# Create crontab
+#
+(crontab -l 2>/dev/null; echo "0 3 * * * /usr/local/bin/renew-certs > /var/log/renew-certs.log") | crontab -
+#
+################################################################################
+#
+# Complete
+echo Complete.
+#
+################################################################################

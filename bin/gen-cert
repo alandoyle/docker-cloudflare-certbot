@@ -1,0 +1,78 @@
+#!/bin/bash
+#
+# gen-certs is a simple wrapper around a Docker container to produce Lets Encrypt
+# certificates authenticated agains Cloudflare DNS using the DNS-01 auth method.
+#
+# Copyright (C) 2023 Alan Doyle
+#
+# https://github.com/alandoyle/docker-cloudflare-certbot
+#
+################################################################################
+#
+# Root check
+#
+if [ `id -u` -ne 0 ] ; then
+    echo "ERROR: This script needs to be run as root or using sudo."
+    exit 99
+fi
+#
+################################################################################
+#
+BINDIR=$(dirname `realpath $0`)
+DOCKERDIR=$(dirname ${BINDIR})
+WILDCARD=false
+#
+################################################################################
+#
+if [ $# -gt 2 -o $# -eq 0 ]; then
+    echo "`basename $0` [OPTIONS] <DOMAINNAME>"
+    echo "Options:"
+    echo -e "\t-w\tinclude wildcard in certificate (Optional)."
+    echo -e "\nExamples:"
+    echo -e "\t`basename $0` -w mydomain.com"
+    echo -e "\t`basename $0` mydomain.com\n"
+    exit 1
+fi
+#
+################################################################################
+#
+case $1 in
+        -w)     DOMAIN=$2
+                WILDCARD=true ;;
+         *)     if [ $# -eq 2 ]; then DOMAIN=$2;
+                else DOMAIN=$1; fi
+                ;;
+esac
+#
+################################################################################
+#
+if [ -z $DOMAIN ] ; then
+     echo "ERROR: No domain provided!"
+     exit 98
+fi
+#
+################################################################################
+#
+if [ ! -f ${DOCKERDIR}/cloudflare/credentials ] ; then
+    echo "ERROR: Cloudflare credentials missing!"
+    exit 99
+fi
+#
+################################################################################
+#
+chmod 600 ${DOCKERDIR}/cloudflare/credentials 2>/dev/null
+if [ ! -f ${DOCKERDIR}/.env ] ; then
+    echo "EMAIL=private@domain.com" > ${DOCKERDIR}/.env
+fi
+#
+################################################################################
+#
+cd ${DOCKERDIR}
+if [ "${WILDCARD}" = "true" ]; then
+        echo DOMAIN=${DOMAIN} docker-compose -f docker-compose.wildcard.yml up
+else
+        echo DOMAIN=${DOMAIN} docker-compose -f docker-compose.single.yml up
+fi
+exit $?
+#
+################################################################################
