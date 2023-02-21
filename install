@@ -9,6 +9,7 @@
 ################################################################################
 #
 EMAILADDRESS=
+APITOKEN=
 #
 ################################################################################
 #
@@ -36,7 +37,7 @@ git pull
 #
 ################################################################################
 #
-# Ensure we have an email address as that's required for sue with Lets Encrypt
+# Ensure we have an email address as that's required for use with Lets Encrypt
 #
 if [ ! -f /srv/docker-cloudflare-certbot/.env ] ; then
     while [ -z EMAILADDRESS ] ; do
@@ -44,6 +45,20 @@ if [ ! -f /srv/docker-cloudflare-certbot/.env ] ; then
     done
     echo EMAIL=${EMAILADDRESS}
     echo "EMAIL=${EMAILADDRESS}" > /srv/docker-cloudflare-certbot/.env
+fi
+#
+################################################################################
+#
+# Ensure we have an API Token to use with Cloudflare DNS
+#
+if [ ! -f /srv/docker-cloudflare-certbot/cloudflare/credentials ] ; then
+    while [ -z APITOKEN ] ; do
+        read -P "What is the API Token to use with Cloudflare? " APITOKEN
+    done
+    [ ! -d /srv/docker-cloudflare-certbot/cloudflare ] && mkdir -p /srv/docker-cloudflare-certbot/cloudflare
+
+    echo APITOKEN=${APITOKEN}
+    echo -e "# CloudFlare API token information\ndns_cloudflare_api_token = ${APITOKEN}" > /srv/docker-cloudflare-certbot/cloudflare/credentials
 fi
 #
 ################################################################################
@@ -63,6 +78,8 @@ ln -s /srv/docker-cloudflare-certbot/bin/test-certbot /usr/local/bin/test-certbo
 ################################################################################
 #
 # Complete
+unset EMAILADDRESS
+unset APITOKEN
 echo Complete.
 #
 ################################################################################
