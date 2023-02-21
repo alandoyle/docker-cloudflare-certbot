@@ -43,7 +43,7 @@ chmod a+x /srv/docker-cloudflare-certbot/install
 #
 [ -f /srv/docker-cloudflare-certbot/.env ] && . /srv/docker-cloudflare-certbot/.env
 while [ -z ${EMAIL} ] ; do
-    read -P "What email address do you wish to use with Lets Encrypt [${EMAIL}] ? " EMAIL
+    read -Pp "What email address do you wish to use with Lets Encrypt [${EMAIL}] ? " EMAIL
 done
 echo EMAIL=${EMAIL}
 echo "EMAIL=${EMAIL}" > /srv/docker-cloudflare-certbot/.env
@@ -56,7 +56,7 @@ if [ ! -f /srv/docker-cloudflare-certbot/cloudflare/credentials ] ; then
     APITOKEN=`grep dns_cloudflare_api_token credentials | cut -d= -f2 | sed -e 's/^[ \t]*//'`
 fi
 while [ -z ${APITOKEN} ] ; do
-    read -P "What is the API Token to use with Cloudflare [${APITOKEN}] ? " APITOKEN
+    read -p "What is the API Token to use with Cloudflare [${APITOKEN}] ? " APITOKEN
 done
 [ ! -d /srv/docker-cloudflare-certbot/cloudflare ] && mkdir -p /srv/docker-cloudflare-certbot/cloudflare
 
