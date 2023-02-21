@@ -43,7 +43,7 @@ chmod a+x /srv/docker-cloudflare-certbot/install
 #
 [ -f /srv/docker-cloudflare-certbot/.env ] && . /srv/docker-cloudflare-certbot/.env
 while [ -z ${EMAIL} ] ; do
-    read -Pp "What email address do you wish to use with Lets Encrypt [${EMAIL}] ? " EMAIL
+    read -p "What email address do you wish to use with Lets Encrypt [${EMAIL}] ? " EMAIL
 done
 echo EMAIL=${EMAIL}
 echo "EMAIL=${EMAIL}" > /srv/docker-cloudflare-certbot/.env
