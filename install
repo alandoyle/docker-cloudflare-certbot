@@ -59,6 +59,7 @@ if [ ! -f /srv/docker-cloudflare-certbot/cloudflare/credentials ] ; then
 
     echo APITOKEN=${APITOKEN}
     echo -e "# CloudFlare API token information\ndns_cloudflare_api_token = ${APITOKEN}" > /srv/docker-cloudflare-certbot/cloudflare/credentials
+    chmod 600 /srv/docker-cloudflare-certbot/cloudflare/credentials
 fi
 #
 ################################################################################
