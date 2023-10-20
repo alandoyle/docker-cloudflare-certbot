@@ -69,9 +69,9 @@ fi
 #
 cd ${DOCKERDIR}
 if [ "${WILDCARD}" = "true" ]; then
-        echo DOMAIN=${DOMAIN} docker-compose -f docker-compose.wildcard.yml up
+        DOMAIN=${DOMAIN} docker-compose -f docker compose.wildcard.yml up
 else
-        echo DOMAIN=${DOMAIN} docker-compose -f docker-compose.single.yml up
+        DOMAIN=${DOMAIN} docker-compose -f docker compose.single.yml up
 fi
 exit $?
 #

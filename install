@@ -46,8 +46,8 @@ while [ -z ${TMPEMAIL} ] ; do
     read -p "What email address do you wish to use with Lets Encrypt [${EMAIL}] ? " TMPEMAIL
     [ -z ${TMPEMAIL} ] && TMPEMAIL=${EMAIL}
 done
-echo EMAIL=${EMAIL}
-echo "EMAIL=${EMAIL}" > /srv/docker-cloudflare-certbot/.env
+echo EMAIL=${TMPEMAIL}
+echo "EMAIL=${TMPEMAIL}" > /srv/docker-cloudflare-certbot/.env
 #
 ################################################################################
 #
@@ -62,8 +62,8 @@ while [ -z ${TMPAPITOKEN} ] ; do
 done
 [ ! -d /srv/docker-cloudflare-certbot/cloudflare ] && mkdir -p /srv/docker-cloudflare-certbot/cloudflare
 
-echo APITOKEN=${APITOKEN}
-echo -e "# CloudFlare API token information\ndns_cloudflare_api_token = ${APITOKEN}" > /srv/docker-cloudflare-certbot/cloudflare/credentials
+echo APITOKEN=${TMPAPITOKEN}
+echo -e "# CloudFlare API token information\ndns_cloudflare_api_token = ${TMPAPITOKEN}" > /srv/docker-cloudflare-certbot/cloudflare/credentials
 chmod 600 /srv/docker-cloudflare-certbot/cloudflare/credentials
 #
 ################################################################################
