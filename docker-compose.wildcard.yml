@@ -1,5 +1,4 @@
-version: "2"
-
+---
 services:
   letsencrypt-cloudflare:
     image: certbot/dns-cloudflare
