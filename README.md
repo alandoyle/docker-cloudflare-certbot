@@ -3,7 +3,7 @@ Simple set of docker compose files to create and renew certbot certificates.
 
 ## Getting started
 
- - Generate a Cloudflare API Token (see https://alandoyle.dev/blog/docker-cloudflare-certbot/ for details how)
+ - Generate a Cloudflare API Token (see https://alandoyle.com/blog/docker-cloudflare-certbot/ for details how)
  - Run `sudo bash -c "$(curl -sSfL https://raw.githubusercontent.com/alandoyle/docker-cloudflare-certbot/main/install)"`
    - Enter the email address to use with Lets Encrypt when requested.
    - Enter the Cloudflare API Token when requested.
