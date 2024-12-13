@@ -1,0 +1,12 @@
+---
+services:
+  letsencrypt-cloudflare:
+    image: certbot/dns-cloudflare
+
+    # Issue certificate
+    command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials -m ${EMAIL} --agree-tos --no-eff-email --dns-cloudflare-propagation-seconds 30 --cert-name ${DOMAIN} ${DOMAINLIST} --server https://acme-v02.api.letsencrypt.org/directory
+
+    volumes:
+      - ./cloudflare:/opt/cloudflare
+      - /etc/letsencrypt:/etc/letsencrypt
+      - ./letsencrypt/log:/var/log/letsencrypt

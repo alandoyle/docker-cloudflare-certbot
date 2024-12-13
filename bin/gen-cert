@@ -3,7 +3,7 @@
 # gen-certs is a simple wrapper around a Docker container to produce Lets Encrypt
 # certificates authenticated agains Cloudflare DNS using the DNS-01 auth method.
 #
-# Copyright (C) 2023 Alan Doyle
+# Copyright (C) 2023-2024 Alan Doyle
 #
 # https://github.com/alandoyle/docker-cloudflare-certbot
 #
@@ -21,16 +21,22 @@ fi
 BINDIR=$(dirname `realpath $0`)
 DOCKERDIR=$(dirname ${BINDIR})
 WILDCARD=false
+MULTI=false
+DOMAIN=
+DOMAINLIST=
 #
 ################################################################################
 #
-if [ $# -gt 2 -o $# -eq 0 ]; then
+if [ $# -eq 0 ]; then
     echo "`basename $0` [OPTIONS] <DOMAINNAME>"
     echo "Options:"
     echo -e "\t-w\tinclude wildcard in certificate (Optional)."
+    echo -e "\t-m\tinclude multiple domains and/or sub-domains in certificate (Optional)."
     echo -e "\nExamples:"
-    echo -e "\t`basename $0` -w mydomain.com"
     echo -e "\t`basename $0` mydomain.com\n"
+    echo -e "\t`basename $0` -w mydomain.com"
+    echo -e "\t`basename $0` -m mydomain.com sub1.mydomain.com sub2.mydomain.com"
+    echo -e "\t`basename $0` -m mydomain.com domain.net domain.org\n"
     exit 1
 fi
 #
@@ -38,16 +44,22 @@ fi
 #
 case $1 in
         -w)     DOMAIN=$2
-                WILDCARD=true ;;
-         *)     if [ $# -eq 2 ]; then DOMAIN=$2;
-                else DOMAIN=$1; fi
+                WILDCARD=true
+                ;;
+        -m)     for (( i = 2; i <= $#; ++i )); do
+                    DOMAINLIST="${DOMAINLIST} -d ${!i}"
+                done
+                DOMAIN=$2
+                MULTI=true
+                ;;
+         *)     DOMAIN=$1;
                 ;;
 esac
 #
 ################################################################################
 #
 if [ -z $DOMAIN ] ; then
-     echo "ERROR: No domain provided!"
+     echo "ERROR: No domain(s) provided!"
      exit 98
 fi
 #
@@ -70,6 +82,8 @@ fi
 cd ${DOCKERDIR}
 if [ "${WILDCARD}" = "true" ]; then
         DOMAIN=${DOMAIN} docker-compose -f docker-compose.wildcard.yml up
+else if [ "${MULTI}" = "true" ]; then
+        DOMAIN=${DOMAIN} DOMAINLIST="${DOMAINLIST}" docker-compose -f docker-compose.multi.yml up
 else
         DOMAIN=${DOMAIN} docker-compose -f docker-compose.single.yml up
 fi

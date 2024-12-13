@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # renew-certs is a simple wrapper around a Docker container to renew Lets Encrypt
-# certificates authenticated agains Cloudflare DNS using the DNS-01 auth method.
+# certificates authenticated against Cloudflare DNS using the DNS-01 auth method.
 #
 # Copyright (C) 2023 Alan Doyle
 #

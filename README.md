@@ -15,19 +15,26 @@ Simple set of docker compose files to create and renew certbot certificates.
 ### renew-certs
 This simply attempts to renew all certificates on the system.
 
-e.g. `sudo renew-certs`
+Example:
+  - `sudo renew-certs`
 
 ### test-certbot
 This script simply checks the configuration is all set and working
 
-e.g. `sudo test-certbot <DOMAIN CONTROLLED BY API TOKEN>`
+Example:
+  - `sudo test-certbot <DOMAIN CONTROLLED BY API TOKEN>`
 
-### test-certbot
-This script generates a new certificate (with optional wildcard subdomains entry)
+### gen-cert
+This script generates a new certificate.
 
-e.g. `sudo gen-cert <DOMAIN CONTROLLED BY API TOKEN>`
+***-w*** adds wildcard subdomains to the certificate.
+***-m*** adds multiple domains/subdomains to the certificate without wildcards.
 
-or to include wildcard subdomains in certificate `sudo gen-cert -w <DOMAIN CONTROLLED BY API TOKEN>`
+Examples:
+  - `sudo gen-cert <DOMAIN CONTROLLED BY API TOKEN>`
+  - `sudo gen-cert -w <DOMAIN CONTROLLED BY API TOKEN>`
+  - `sudo gen-cert -m <DOMAIN CONTROLLED BY API TOKEN> <SUBDOMAIN CONTROLLED BY API TOKEN> <ANOTHER SUBDOMAIN CONTROLLED BY API TOKEN>`
+  - `sudo gen-cert -m <DOMAIN CONTROLLED BY API TOKEN> <ANOTHER DOMAIN CONTROLLED BY API TOKEN> <YET ANOTHER DOMAIN CONTROLLED BY API TOKEN>`
 
 ## Note
 
