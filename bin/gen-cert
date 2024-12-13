@@ -82,7 +82,7 @@ fi
 cd ${DOCKERDIR}
 if [ "${WILDCARD}" = "true" ]; then
         DOMAIN=${DOMAIN} docker-compose -f docker-compose.wildcard.yml up
-else if [ "${MULTI}" = "true" ]; then
+elif [ "${MULTI}" = "true" ]; then
         DOMAIN=${DOMAIN} DOMAINLIST="${DOMAINLIST}" docker-compose -f docker-compose.multi.yml up
 else
         DOMAIN=${DOMAIN} docker-compose -f docker-compose.single.yml up
