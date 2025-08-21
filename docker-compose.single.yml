@@ -9,4 +9,4 @@ services:
     volumes:
       - ./cloudflare:/opt/cloudflare
       - /etc/letsencrypt:/etc/letsencrypt
-      - ./letsencrypt/log:/var/log/letsencrypt
+      - /var/log/letsencrypt:/var/log/letsencrypt

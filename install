@@ -36,6 +36,7 @@ cd /srv/docker-cloudflare-certbot
 git pull >/dev/null
 chmod a+x /srv/docker-cloudflare-certbot/bin/*
 chmod a+x /srv/docker-cloudflare-certbot/install
+mkdir -p /var/log/letsencrypt
 #
 ################################################################################
 #
