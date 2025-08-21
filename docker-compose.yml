@@ -4,7 +4,7 @@ services:
     image: certbot/dns-cloudflare
 
     # Renew certificate
-    command: renew --non-interactive --no-self-upgrade --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos --server https://acme-v02.api.letsencrypt.org/directory
+    command: renew --non-interactive --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos --server https://acme-v02.api.letsencrypt.org/directory
 
     volumes:
       - ./cloudflare:/opt/cloudflare
