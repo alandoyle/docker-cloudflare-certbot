@@ -60,10 +60,26 @@ fi
 #
 cd /srv/docker-cloudflare-certbot
 git pull >/dev/null
-chmod a+x /srv/docker-cloudflare-certbot/bin/*
-chmod a+x /srv/docker-cloudflare-certbot/install
 mkdir -p /var/log/letsencrypt
 apt-get update >/dev/null
+#
+################################################################################
+#
+# Create directory structure
+#
+[ ! -d /etc/certbot-cf/restart ] && mkdir -p /etc/certbot-cf/restart
+[ ! -f /etc/certbot-cf/restart/nginx ] && echo "# systemctl restart nginx" > /etc/certbot-cf/restart/nginx
+[ ! -f /etc/certbot-cf/restart/apache ] && echo "# systemctl restart apache" > /etc/certbot-cf/restart/apache
+[ ! -f /etc/certbot-cf/restart/webmin ] && echo "# /etc/webmin/restart" > /etc/certbot-cf/restart/webmin#
+#
+################################################################################
+#
+# Migrate credentials
+#
+if [ -f /srv/docker-cloudflare-certbot/cloudflare/credentials ] ; then
+    mv /srv/docker-cloudflare-certbot/cloudflare/credentials /etc/certbot-cf/credentials
+    rm -rf /srv/docker-cloudflare-certbot/cloudflare
+fi
 #
 ################################################################################
 #
@@ -81,35 +97,31 @@ echo "EMAIL=${TMPEMAIL}" > /srv/docker-cloudflare-certbot/.env
 #
 # Ensure we have an API Token to use with Cloudflare DNS
 #
-if [ -f /srv/docker-cloudflare-certbot/cloudflare/credentials ] ; then
-    APITOKEN=`grep dns_cloudflare_api_token /srv/docker-cloudflare-certbot/cloudflare/credentials | cut -d= -f2 | sed -e 's/^[ \t]*//'`
+if [ -f /etc/certbot-cf/credentials ] ; then
+    APITOKEN=`grep dns_cloudflare_api_token /etc/certbot-cf/credentials | cut -d= -f2 | sed -e 's/^[ \t]*//'`
 fi
 while [ -z ${TMPAPITOKEN} ] ; do
     read -p "What is the API Token to use with Cloudflare [${APITOKEN}] ? " TMPAPITOKEN
     [ -z ${TMPAPITOKEN} ] && TMPAPITOKEN=${APITOKEN}
 done
-[ ! -d /srv/docker-cloudflare-certbot/cloudflare ] && mkdir -p /srv/docker-cloudflare-certbot/cloudflare
 
 echo APITOKEN=${TMPAPITOKEN}
-echo -e "# CloudFlare API token information\ndns_cloudflare_api_token = ${TMPAPITOKEN}" > /srv/docker-cloudflare-certbot/cloudflare/credentials
-chmod 600 /srv/docker-cloudflare-certbot/cloudflare/credentials
+echo -e "# CloudFlare API token information\ndns_cloudflare_api_token = ${TMPAPITOKEN}" > /etc/certbot-cf/credentials
+chmod 600 /etc/certbot-cf/credentials
 #
 ################################################################################
 #
-# Create sumbolic links
+# Replace old symbolic links
 #
-ln -sf /srv/docker-cloudflare-certbot/bin/gen-cert     /usr/local/bin/gen-cert
-ln -sf /srv/docker-cloudflare-certbot/bin/renew-certs  /usr/local/bin/renew-certs
-ln -sf /srv/docker-cloudflare-certbot/bin/test-certbot /usr/local/bin/test-certbot
-#
-################################################################################
-#
-# Create restart directory
-#
-[ ! -d /etc/certbot-cf/restart ] && mkdir -p /etc/certbot-cf/restart
-[ ! -f /etc/certbot-cf/restart/nginx ] && echo "# systemctl restart nginx" > /etc/certbot-cf/restart/nginx
-[ ! -f /etc/certbot-cf/restart/apache ] && echo "# systemctl restart apache" > /etc/certbot-cf/restart/apache
-[ ! -f /etc/certbot-cf/restart/webmin ] && echo "# /etc/webmin/restart" > /etc/certbot-cf/restart/webmin
+[ -h /usr/local/bin/gen-cert ]     && rm -f /usr/local/bin/gen-cert
+[ -h /usr/local/bin/renew-certs ]  && rm -f /usr/local/bin/renew-certs
+[ -h /usr/local/bin/test-certbot ] && rm -f /usr/local/bin/test-certbot
+
+cp -f /srv/docker-cloudflare-certbot/bin/gen-cert     /usr/local/bin/gen-cert
+cp -f /srv/docker-cloudflare-certbot/bin/renew-certs  /usr/local/bin/renew-certs
+cp -f /srv/docker-cloudflare-certbot/bin/test-certbot /usr/local/bin/test-certbot
+
+chmod a+x /usr/local/bin/*cert*
 #
 ################################################################################
 #

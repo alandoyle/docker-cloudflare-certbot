@@ -8,6 +8,6 @@ services:
     command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials -m ${EMAIL} --agree-tos --no-eff-email --dns-cloudflare-propagation-seconds 30 --cert-name ${DOMAIN} -d ${DOMAIN} -d "*.${DOMAIN}" --server https://acme-v02.api.letsencrypt.org/directory --dry-run
 
     volumes:
-      - ./cloudflare:/opt/cloudflare
+      - /etc/certbot-cf:/opt/cloudflare
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/log/letsencrypt:/var/log/letsencrypt
