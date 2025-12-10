@@ -1,10 +1,27 @@
 #!/bin/bash
 #
-# A simple installer for the Certbot Cloudflare DNS docker image.
+# A simple installer for Certbot with Cloudflare DNS-01 auth method.
 #
-# Copyright (C) 2023 Alan Doyle
+# Copyright (C) 2023-2025 Alan Doyle
 #
 # https://github.com/alandoyle/docker-cloudflare-certbot
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see http://www.gnu.org/licenses/.
+#
+# Install using:
+#     sudo bash -c "$(wget -qLO - https://raw.githubusercontent.com/alandoyle/docker-cloudflare-certbot/main/install)"
+# or
+#     sudo bash -c "$(curl -sSfL https://raw.githubusercontent.com/alandoyle/docker-cloudflare-certbot/main/install)"
 #
 ################################################################################
 #
@@ -17,6 +34,15 @@ APITOKEN=
 #
 if [ `id -u` -ne 0 ] ; then
     echo "ERROR: This script needs to be run as root or using sudo."
+    exit 99
+fi
+#
+################################################################################
+#
+# Docker Check
+#
+if [ ! -f /usr/bin/docker ] ; then
+    echo "ERROR: This script needs 'docker' installed."
     exit 99
 fi
 ################################################################################
@@ -37,6 +63,8 @@ git pull >/dev/null
 chmod a+x /srv/docker-cloudflare-certbot/bin/*
 chmod a+x /srv/docker-cloudflare-certbot/install
 mkdir -p /var/log/letsencrypt
+apt update >/dev/null
+apt install cron -y
 #
 ################################################################################
 #
@@ -77,9 +105,51 @@ ln -sf /srv/docker-cloudflare-certbot/bin/test-certbot /usr/local/bin/test-certb
 #
 ################################################################################
 #
-# Create crontab
+# Remove crontab
 #
-(crontab -l 2>/dev/null; echo "0 3 * * * /usr/local/bin/renew-certs > /var/log/renew-certs.log") | crontab -
+(crontab -l | grep -v renew-certs) | crontab -
+#
+################################################################################
+#
+# Stop old Certbot systemd service
+#
+systemctl stop certbot.timer 2>/dev/null
+systemctl disable certbot.timer 2>/dev/null
+systemctl stop certbot.service 2>/dev/null
+systemctl disable certbot.service 2>/dev/null
+#
+# New Cloudflare systemd timer
+cat << EOF | tee  /usr/lib/systemd/system/certbot-cf.timer >/dev/null
+[Unit]
+Description=Run Certbot (Cloudflare DNS-01) twice daily
+
+[Timer]
+OnCalendar=*-*-* 00,12:00:00
+RandomizedDelaySec=43200
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+#
+# New Cloudflare systemd service
+cat << EOF | tee  /usr/lib/systemd/system/certbot-cf.service >/dev/null
+[Unit]
+Description=Certbot (Cloudflare DNS-01)
+Documentation=file:///usr/share/doc/python-certbot-doc/html/index.html
+Documentation=https://certbot.eff.org/docs
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/renew-certs > /var/log/letsencrypt/renew-certs.log
+PrivateTmp=true
+EOF
+#
+# Refresh systemd
+systemctl daemon-reload
+#
+# Start timer
+systemctl enable certbot-cf.timer
+systemctl start certbot-cf.timer
 #
 ################################################################################
 #
