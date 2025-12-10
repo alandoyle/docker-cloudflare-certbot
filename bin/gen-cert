@@ -65,14 +65,14 @@ fi
 #
 ################################################################################
 #
-if [ ! -f ${DOCKERDIR}/cloudflare/credentials ] ; then
+if [ ! -f /etc/certbot-cf/credentials ] ; then
     echo "ERROR: Cloudflare credentials missing!"
     exit 99
 fi
 #
 ################################################################################
 #
-chmod 600 ${DOCKERDIR}/cloudflare/credentials 2>/dev/null
+chmod 600 /etc/certbot-cf/credentials 2>/dev/null
 if [ ! -f ${DOCKERDIR}/.env ] ; then
     echo "EMAIL=private@domain.com" > ${DOCKERDIR}/.env
 fi

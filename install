@@ -116,12 +116,15 @@ chmod 600 /etc/certbot-cf/credentials
 [ -h /usr/local/bin/gen-cert ]     && rm -f /usr/local/bin/gen-cert
 [ -h /usr/local/bin/renew-certs ]  && rm -f /usr/local/bin/renew-certs
 [ -h /usr/local/bin/test-certbot ] && rm -f /usr/local/bin/test-certbot
+[ -f /usr/local/bin/gen-cert ]     && rm -f /usr/local/bin/gen-cert
+[ -f /usr/local/bin/renew-certs ]  && rm -f /usr/local/bin/renew-certs
+[ -f /usr/local/bin/test-certbot ] && rm -f /usr/local/bin/test-certbot
 
-cp -f /srv/docker-cloudflare-certbot/bin/gen-cert     /usr/local/bin/gen-cert
-cp -f /srv/docker-cloudflare-certbot/bin/renew-certs  /usr/local/bin/renew-certs
-cp -f /srv/docker-cloudflare-certbot/bin/test-certbot /usr/local/bin/test-certbot
+cp -f /srv/docker-cloudflare-certbot/bin/gen-cert     /usr/bin/gen-cert
+cp -f /srv/docker-cloudflare-certbot/bin/renew-certs  /usr/bin/renew-certs
+cp -f /srv/docker-cloudflare-certbot/bin/test-certbot /usr/bin/test-certbot
 
-chmod a+x /usr/local/bin/*cert*
+chmod a+x /usr/bin/*cert*
 #
 ################################################################################
 #
@@ -160,7 +163,7 @@ Documentation=file:///usr/share/doc/python-certbot-doc/html/index.html
 Documentation=https://certbot.eff.org/docs
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/renew-certs > /var/log/letsencrypt/renew-certs.log
+ExecStart=/usr/bin/renew-certs > /var/log/letsencrypt/renew-certs.log
 PrivateTmp=true
 EOF
 #

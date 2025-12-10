@@ -7,8 +7,12 @@ Simple set of docker compose files to create and renew certbot certificates.
  - Run `sudo bash -c "$(curl -sSfL https://raw.githubusercontent.com/alandoyle/docker-cloudflare-certbot/main/install)"`
    - Enter the email address to use with Lets Encrypt when requested.
    - Enter the Cloudflare API Token when requested.
-   - This installs a "Renew Certificates" cron job for root.
-   - This also installs 3 new commands to `/usr/local/bin` to create/renew certificates manually.
+   - This installs a "Renew Certificates" SystemD Timer.
+   - This also installs 3 new commands to `/usr/bin` to create/renew certificates manually.
+
+## Auto restart when renew-certs is run
+To restart a service, e.g. nginx, simply add a simple script to /etc/certbot-cf/restart directory.
+Some simple examples are included.
 
 ## Commandline tools
 
