@@ -46,7 +46,7 @@ RETVAL=$?
 for RESTART_SCRIPT in $(ls /etc/certbot-cf/restart)
 do
     echo "Running ${RESTART_SCRIPT}..."
-    bash "$RESTART_SCRIPT"
+    bash "/etc/certbot-cf/restart/$RESTART_SCRIPT"
 done
 #
 ################################################################################
