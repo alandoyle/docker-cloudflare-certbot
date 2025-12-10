@@ -63,8 +63,7 @@ git pull >/dev/null
 chmod a+x /srv/docker-cloudflare-certbot/bin/*
 chmod a+x /srv/docker-cloudflare-certbot/install
 mkdir -p /var/log/letsencrypt
-apt update >/dev/null
-apt install cron -y
+apt-get update >/dev/null
 #
 ################################################################################
 #
@@ -102,6 +101,15 @@ chmod 600 /srv/docker-cloudflare-certbot/cloudflare/credentials
 ln -sf /srv/docker-cloudflare-certbot/bin/gen-cert     /usr/local/bin/gen-cert
 ln -sf /srv/docker-cloudflare-certbot/bin/renew-certs  /usr/local/bin/renew-certs
 ln -sf /srv/docker-cloudflare-certbot/bin/test-certbot /usr/local/bin/test-certbot
+#
+################################################################################
+#
+# Create restart directory
+#
+[ ! -d /etc/certbot-cf/restart ] && mkdir -p /etc/certbot-cf/restart
+[ ! -f /etc/certbot-cf/restart/nginx ] && echo "# systemctl restart nginx" > /etc/certbot-cf/restart/nginx
+[ ! -f /etc/certbot-cf/restart/apache ] && echo "# systemctl restart apache" > /etc/certbot-cf/restart/apache
+[ ! -f /etc/certbot-cf/restart/webmin ] && echo "# /etc/webmin/restart" > /etc/certbot-cf/restart/webmin
 #
 ################################################################################
 #

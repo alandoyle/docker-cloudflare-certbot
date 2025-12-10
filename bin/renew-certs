@@ -40,6 +40,14 @@ fi
 #
 cd ${DOCKERDIR}
 docker compose up
-exit $?
+RETVAL=$?
+#
+################################################################################
+#
+for RESTART_SCRIPT in $(ls /etc/certbot-cf/restart)
+do
+    echo "Running ${RESTART_SCRIPT}..."
+    bash "$RESTART_SCRIPT"
+done
 #
 ################################################################################
