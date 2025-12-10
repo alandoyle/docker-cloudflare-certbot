@@ -18,8 +18,7 @@ fi
 #
 ################################################################################
 #
-BINDIR=$(dirname `realpath $0`)
-DOCKERDIR=$(dirname ${BINDIR})
+DOCKERDIR=/srv/docker-cloudflare-certbot/
 WILDCARD=false
 MULTI=false
 DOMAIN=
