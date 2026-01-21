@@ -67,10 +67,11 @@ apt-get update >/dev/null
 #
 # Create directory structure
 #
-[ ! -d /etc/certbot-cf/restart ] && mkdir -p /etc/certbot-cf/restart
-[ ! -f /etc/certbot-cf/restart/nginx ] && echo "# systemctl restart nginx" > /etc/certbot-cf/restart/nginx
+[ ! -d /etc/certbot-cf/restart ]        && mkdir -p /etc/certbot-cf/restart
+[ ! -f /etc/certbot-cf/restart/nginx ]  && echo "# systemctl restart nginx" > /etc/certbot-cf/restart/nginx
 [ ! -f /etc/certbot-cf/restart/apache ] && echo "# systemctl restart apache" > /etc/certbot-cf/restart/apache
-[ ! -f /etc/certbot-cf/restart/webmin ] && echo "# /etc/webmin/restart" > /etc/certbot-cf/restart/webmin#
+[ ! -f /etc/certbot-cf/restart/webmin ] && echo "# /etc/webmin/restart" > /etc/certbot-cf/restart/webmin
+[ -f /etc/certbot-cf/restart/webmin# ]  && rm /etc/certbot-cf/restart/webmin#
 #
 ################################################################################
 #
