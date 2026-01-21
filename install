@@ -131,7 +131,9 @@ chmod a+x /usr/bin/*cert*
 #
 # Remove crontab
 #
-(crontab -l | grep -v renew-certs) | crontab -
+if [ -f /usr/bin/crontab ] ; then
+    (crontab -l | grep -v renew-certs) | crontab -
+fi
 #
 ################################################################################
 #
